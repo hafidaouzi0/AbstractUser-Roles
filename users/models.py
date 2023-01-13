@@ -15,7 +15,7 @@ class User(AbstractUser):
       Role=models.CharField(max_length=60,choices=role_user.choices)
 
       def save(self,*args,**kwargs):
-        #id the user doesn't have a pk : means if the user hasn't being created
+        #id the user doesn't have a pk : means if the user hasn't being created 
         if not self.pk:
             self.Role=self.base_role_user
         return super().save(*args,**kwargs)
