@@ -68,3 +68,20 @@ class Teacher(User):
         
 
     
+
+
+    #test in terminal :use ctrl+/ to comment multiple lines
+#     python manage.py shell
+
+# >>> from users.models import Student,Teacher
+# >>> Student.objects.create_user(username="safia",password="1234")
+# <Student: safia>
+# >>> Student.student.all() 
+# <QuerySet [<Student: safia>]>
+# >>> Teacher.objects.create_user(username="prof",password="1223")
+# <Teacher: prof>
+# >>> Teacher.teacher.all()
+# <QuerySet [<Teacher: prof>]>
+# >>> Teacher.objects.all() 
+# <QuerySet [<Teacher: hafida>, <Teacher: safia>, <Teacher: prof>]>
+# >>>
