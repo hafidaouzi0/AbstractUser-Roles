@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser,BaseUserManager
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 # Create your models here.
 
 class User(AbstractUser):
@@ -38,6 +40,24 @@ class Student(User):
     def welcome(self):
         return  "only for students"
 
+#Students and teachers require separate profile data
+#we gonna use post-save signal so that whenever we save a new user we gonna send a signal
+#and capture that signal so that we can perform some additional task
+#we gonna need the receiver to receive those signals
+
+@receiver(post_save,sender=Student)
+def create_user_profile(sender,instance,created,**kwargs):
+    if created and instance.Role == "STUDENT":
+        StudentProfile.objects.create(user=instance)
+
+
+
+
+#Student profile
+class StudentProfile(models.Model):
+    user=models.OneToOneField(User,on_delete=models.CASCADE)
+    student_id=models.IntegerField(null=True,blank=True)
+
 
 
 
@@ -66,8 +86,17 @@ class Teacher(User):
     def welcome(self):
         return "only for teachers"
         
+@receiver(post_save,sender=Teacher)
+def create_user_profile(sender,instance,created,**kwargs):
+    if created and instance.Role == "TEACHER":
+        Student.objects.create(user=instance)
 
-    
+
+    #Teacher profile 
+class TeacherProfile(models.Model):
+        user = models.OneToOneField(User,on_delete=models.CASCADE)
+        teacher_id =models.IntegerField(null=True,blank=True)
+
 
 
     #test in terminal :use ctrl+/ to comment multiple lines
@@ -85,3 +114,21 @@ class Teacher(User):
 # >>> Teacher.objects.all() 
 # <QuerySet [<Teacher: hafida>, <Teacher: safia>, <Teacher: prof>]>
 # >>>
+
+
+
+# the @receiver(post_save, sender=Student) is a decorator that registers a function create_user_profile as a signal receiver for the post_save signal emitted by the Student model. This means that the function create_user_profile will be called every time an instance of the Student model is saved.
+
+# The create_user_profile function has four arguments: sender, instance, created, and **kwargs.
+
+# sender is the model class that emitted the signal (in this case, the Student class).
+# instance is the instance of the model that was saved.
+# created is a boolean value that indicates whether the instance was just created or updated.
+# **kwargs is a catch-all for any additional keyword arguments passed to the signal.
+# In this function, the if statement checks if the instance is just created and has a role of "STUDENT". If both conditions are met, it creates a new StudentProfile instance and assigns the user attribute to the instance of the Student model that was just saved.
+
+# The StudentProfile model has two fields:
+
+# user field which has a one-to-one relationship with the User model, this means that for each User model, there will be one and only one StudentProfile model associated with it.
+# student_id field which is an integer field that can be null and blank, this field can be used to store an additional information about the student.
+# The post_save signal is emitted every time the save() method is called on an instance of the Student model. In this case, the create_user_profile function is called after the save() method is called on an instance of the Student model, this allows the developer to perform additional actions after the instance is saved.
