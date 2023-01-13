@@ -97,6 +97,16 @@ class TeacherProfile(models.Model):
         user = models.OneToOneField(User,on_delete=models.CASCADE)
         teacher_id =models.IntegerField(null=True,blank=True)
 
+      
+                    
+# So, creating a StudentProfile model allows you to store additional information about the student,
+#  which is not directly related to their enrollment or academic status, separate from the Student model.
+#   This separation allows for a more organized and manageable data structure,
+#    and also allows to update the fields separately if needed.
+
+# Additionally, it's a good practice to separate the user data and the profile data, 
+# so that you can use the same user model in different parts of your application 
+# and you can add more fields to the profile model if needed.
 
 
     #test in terminal :use ctrl+/ to comment multiple lines
